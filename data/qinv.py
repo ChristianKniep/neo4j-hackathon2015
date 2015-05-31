@@ -226,7 +226,7 @@ class InventoryClass(object):
     def push_rpm(self):
         """ push rpm information
         """
-        os_query ="SELECT name, version, arch FROM rpm_packages;"
+        os_query = "SELECT name, version, arch FROM rpm_packages WHERE name in ('less', 'procps-ng','vim-enhanced', 'python-pip');"
         for item in json.loads(self._osq.setOutputMode("--json").query(os_query)):
             query = "MERGE (a:Arch {arch:{arch}}) MERGE (p:Pkg {name:{name}})-[:IS_ARCH]->a"
             query += " MERGE (i:Installation {version:{version}})"
@@ -248,8 +248,9 @@ class InventoryClass(object):
                 item['size'] = int(item['size'])
                 query = "MATCH (p:Pkg {name:{name}})"
                 query += " MERGE (f:File {name:{file_name}, path:{path}, size:{size}, mode:{mode}})"
-                query += " MERGE (f)<-[:PROVIDES]-(p)"
-                self._gdb.query(q=query, params=item)
+                query += " MERGE (f)<-[:PROVIDES]-(p) RETURN count(*)"
+                res = self._gdb.query(q=query, params=item)
+                #print item, res
 
     def push_processes(self):
         """ push process table
@@ -260,9 +261,9 @@ class InventoryClass(object):
             query += " MERGE (p:Process {pid:{pid}, cmdline:{cmdline}, name:{name}, uid:{uid}})"
             query += " ON CREATE SET p.created_at = timestamp(), p.seen_at = timestamp()"
             query += " ON MATCH SET p.seen_at = timestamp()"
-            query += " MERGE (f)<-[:RUNS]-(p)"
-            self._gdb.query(q=query, params=item)
-
+            query += " MERGE (f)<-[:RUNS]-(p) RETURN count(*)"
+            res = self._gdb.query(q=query, params=item)
+            #print item, res
 
 
     def con_gdb(self):
