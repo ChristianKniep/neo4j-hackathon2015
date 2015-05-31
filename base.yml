@@ -4,16 +4,18 @@ neo4j:
   ports:
   - 7474:7474
   environment:
-  - DC_NAME=dc1
+  - DC_NAME=dc2
   - FORWARD_TO_LOGSTASH=false
   - CNT_TYPE=service
+  volumes:
+  - "/var/lib/neo4j/"
   dns: 127.0.0.1
   privileged: true
 
 inventory:
   image: qnib/inventory
   environment:
-  - DC_NAME=dc1
+  - DC_NAME=dc2
   - CNT_TYPE=service
   dns: 127.0.0.1
   hostname: inventory
@@ -24,7 +26,7 @@ consul:
   ports:
    - "8500:8500"
   environment:
-  - DC_NAME=dc1
+  - DC_NAME=dc2
   - CNT_TYPE=service
   dns: 127.0.0.1
   hostname: consul
@@ -33,7 +35,7 @@ consul:
 fd20:
   image: qnib/fd20-inv-client
   environment:
-  - DC_NAME=dc1
+  - DC_NAME=dc2
   - CNT_TYPE=service
   dns: 127.0.0.1
   privileged: true
@@ -41,7 +43,7 @@ fd20:
 u14:
   image: qnib/u14-terminal
   environment:
-  - DC_NAME=dc1
+  - DC_NAME=dc2
   - CNT_TYPE=service
   dns: 127.0.0.1
   privileged: true
