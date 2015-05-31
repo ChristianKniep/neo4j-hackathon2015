@@ -14,9 +14,9 @@ Options:
 General Options:
     -h --help               Show this screen.
     --version               Show version.
-    --loglevel, -L=<str>    Loglevel
+    --loglevel, -L=<str>    Loglevel [default: INFO]
                             (ERROR, CRITICAL, WARN, INFO, DEBUG)
-    --log2stdout, -l        Log to stdout, otherwise to logfile. [default: False]
+    --log2stdout, -l        Log to stdout, otherwise to logfile. [default: True]
     --logfile, -f=<path>    Logfile to log to (default: <scriptname>.log)
     --cfg, -c=<path>        Configuration file.
 
@@ -29,6 +29,7 @@ import re
 import codecs
 import ast
 import sys
+import json
 from ConfigParser import RawConfigParser, NoOptionError
 from osquery import osquery
 
@@ -211,8 +212,23 @@ class InventoryClass(object):
     def run(self):
         """ does sth
         """
-        query ="SELECT * FROM users;"
-        print self._osq.setOutputMode("--json").query(query)
+        self.push_pkg()
+
+    def push_pkg(self):
+        """ fetch installed system packages and push it to Neo4j
+        """
+        if os.path.exists("/etc/redhat-release"):
+            self.push_rpm()
+
+    def push_rpm(self):
+        """ push rpm information
+        """
+        query ="SELECT name, version, arch  FROM rpm_packages;"
+        for item in json.loads(self._osq.setOutputMode("--json").query(query)):
+            type(item)
+            query = "MERGE (rpm:ARCH {"
+            new_node = self._gdb.query(query)
+
 
     def con_gdb(self):
         """ connect to neo4j
