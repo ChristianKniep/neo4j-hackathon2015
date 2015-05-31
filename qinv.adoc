@@ -1,20 +1,13 @@
-= A simple GraphGist
+= QNIBInventory
 
-You create a GraphGist by creating a https://gist.github.com/[GitHub Gist] in http://asciidoctor.org/docs/asciidoc-quick-reference/[AsciiDoc] and enter the URL to it in the form on this page.
+A graphDB model that gathers information using `osquery` and pushes this information into Neo4j.
 
-Click on the Page Source button in the menu to see the source for this GraphGist!
+== Goal
 
-== Include a query console
+- Show which package a file belongs to, which is executed currently
+- build up history of installed packages
 
-+//console+
-
-becomes:
-
-//console
-
-NOTE: Put the console before any queries!
-
-== Define a http://docs.neo4j.org/chunked/snapshot/cypher-query-lang.html[Cypher] query
+== Staging
 
  [source,cypher]
  ----
@@ -112,14 +105,3 @@ create _4368-[:`RUNS`]->_4336
 ;
 commit
  ----
-
-becomes:
-
-[source,cypher]
-----
-CREATE (n{name:'cypher'})-[r:LIKES]->({name:'icecream'}) return n.name, r
-----
-
-_Queries are executed in the order they appear on the page during rendering, so make sure they can be performed in that order._
-Each query has a green or red button to indicate if the query was successful or not.
-The console is set up after the executions, with an empty database, for the reader to play around with the queries.
