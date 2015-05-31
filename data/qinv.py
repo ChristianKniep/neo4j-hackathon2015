@@ -9,6 +9,9 @@ Usage:
     qnib_.py --version
 
 Options:
+    --host <str>            neo4j hostname [default: neo4j.service.consul]
+
+General Options:
     -h --help               Show this screen.
     --version               Show version.
     --loglevel, -L=<str>    Loglevel
@@ -27,6 +30,11 @@ import codecs
 import ast
 import sys
 from ConfigParser import RawConfigParser, NoOptionError
+from osquery import osquery
+
+### costum libraries
+from neo4jrestclient.client import GraphDatabase, Node
+from neo4jrestclient.query import QuerySequence
 
 try:
     from docopt import docopt
@@ -197,11 +205,24 @@ class InventoryClass(object):
         """ Init of instance
         """
         self._cfg = cfg
+        self.con_gdb()
+        self._osq = osquery()
 
     def run(self):
         """ does sth
         """
-        self._cfg._logger.info("Hello")
+        query ="SELECT * FROM users;"
+        print self._osq.setOutputMode("--json").query(query)
+
+    def con_gdb(self):
+        """ connect to neo4j
+        """
+        url = "http://%(--host)s:7474" % self._cfg
+        try:
+            self._gdb = GraphDatabase(url)
+        except ConnectionError:
+            time.sleep(3)
+            self.con_gdb()
 
 
 def main():
