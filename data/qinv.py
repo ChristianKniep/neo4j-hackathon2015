@@ -212,7 +212,9 @@ class InventoryClass(object):
     def run(self):
         """ does sth
         """
-        self.push_pkg()
+        #self.push_pkg()
+        self.push_groups()
+        self.push_users()
 
     def push_pkg(self):
         """ fetch installed system packages and push it to Neo4j
@@ -221,6 +223,7 @@ class InventoryClass(object):
         if os.path.exists("/etc/redhat-release"):
             self.push_rpm()
 
+
     def push_rpm(self):
         """ push rpm information
         """
@@ -228,6 +231,32 @@ class InventoryClass(object):
         for item in json.loads(self._osq.setOutputMode("--json").query(query)):
             new_node = self._gdb.nodes.create(**item)
             self._pkg.add(new_node)
+
+
+    def push_users(self):
+        """ push users information
+        """
+        self._users = self._gdb.labels.create("Users")
+        query ="SELECT uid,gid,username,directory,shell FROM users;"
+        for item in json.loads(self._osq.setOutputMode("--json").query(query)):
+	    print item
+            ##new_node = self._gdb.nodes.create(**item)
+            ##self._users.add(new_node)
+	    query = "MATCH (g:Groups {gid:{gid}})"
+	    query += " MERGE (u:Users {name:{username},directory:{directory},shell:{shell},uid:{uid}, gid:{gid}})"
+	    query += " MERGE (u)-[:MEMBER]->(g)"
+            new_relation = self._gdb.query(query, params=item)    
+
+
+    def push_groups(self):
+        """ push groups information
+        """
+        self._groups = self._gdb.labels.create("Groups")
+        query ="SELECT gid,groupname AS name FROM groups;"
+        for item in json.loads(self._osq.setOutputMode("--json").query(query)):
+	    print item
+            new_node = self._gdb.nodes.create(**item)
+            self._groups.add(new_node)
 
 
     def con_gdb(self):
