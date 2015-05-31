@@ -1,0 +1,125 @@
+= A simple GraphGist
+
+You create a GraphGist by creating a https://gist.github.com/[GitHub Gist] in http://asciidoctor.org/docs/asciidoc-quick-reference/[AsciiDoc] and enter the URL to it in the form on this page.
+
+Click on the Page Source button in the menu to see the source for this GraphGist!
+
+== Include a query console
+
++//console+
+
+becomes:
+
+//console
+
+NOTE: Put the console before any queries!
+
+== Define a http://docs.neo4j.org/chunked/snapshot/cypher-query-lang.html[Cypher] query
+
+ [source,cypher]
+ ----
+ begin
+create (_3755:`Group` {`name`:"test"})
+create (_4325:`Arch` {`arch`:"x86_64"})
+create (_4326:`Pkg` {`name`:"less"})
+create (_4327:`Installation` {`created_at`:1433091090059, `seen_at`:1433091090059, `version`:"458"})
+create (_4328:`Latest`)
+create (_4329:`Pkg` {`name`:"procps-ng"})
+create (_4330:`Installation` {`seen_at`:1433091090086, `version`:"3.3.8"})
+create (_4331:`Pkg` {`name`:"vim-enhanced"})
+create (_4332:`Installation` {`seen_at`:1433091090100, `version`:"7.4.475"})
+create (_4333:`Arch` {`arch`:"noarch"})
+create (_4334:`Pkg` {`name`:"python-pip"})
+create (_4335:`Installation` {`seen_at`:1433091090109, `version`:"6.0.8"})
+create (_4336:`File` {`mode`:"0755", `name`:"less", `path`:"/usr/bin/less", `size`:158216})
+create (_4337:`File` {`mode`:"0755", `name`:"lessecho", `path`:"/usr/bin/lessecho", `size`:11424})
+create (_4338:`File` {`mode`:"0755", `name`:"lesskey", `path`:"/usr/bin/lesskey", `size`:17088})
+create (_4339:`File` {`mode`:"0755", `name`:"lesspipe.sh", `path`:"/usr/bin/lesspipe.sh", `size`:2291})
+create (_4340:`File` {`mode`:"0755", `name`:"less", `path`:"/usr/share/doc/less", `size`:4096})
+create (_4341:`File` {`mode`:"0755", `name`:"sysctl.d", `path`:"/etc/sysctl.d", `size`:4096})
+create (_4342:`File` {`mode`:"0755", `name`:"free", `path`:"/usr/bin/free", `size`:15736})
+create (_4343:`File` {`mode`:"0755", `name`:"pgrep", `path`:"/usr/bin/pgrep", `size`:24208})
+create (_4344:`File` {`mode`:"0755", `name`:"pkill", `path`:"/usr/bin/pkill", `size`:24208})
+create (_4345:`File` {`mode`:"0755", `name`:"pmap", `path`:"/usr/bin/pmap", `size`:28304})
+create (_4346:`File` {`mode`:"0755", `name`:"ps", `path`:"/usr/bin/ps", `size`:95944})
+create (_4347:`File` {`mode`:"0755", `name`:"pwdx", `path`:"/usr/bin/pwdx", `size`:11568})
+create (_4348:`File` {`mode`:"0755", `name`:"skill", `path`:"/usr/bin/skill", `size`:24168})
+create (_4349:`File` {`mode`:"0755", `name`:"slabtop", `path`:"/usr/bin/slabtop", `size`:20000})
+create (_4350:`File` {`mode`:"0755", `name`:"snice", `path`:"/usr/bin/snice", `size`:24168})
+create (_4351:`File` {`mode`:"0755", `name`:"tload", `path`:"/usr/bin/tload", `size`:15776})
+create (_4352:`File` {`mode`:"0755", `name`:"top", `path`:"/usr/bin/top", `size`:102432})
+create (_4353:`File` {`mode`:"0755", `name`:"uptime", `path`:"/usr/bin/uptime", `size`:11504})
+create (_4354:`File` {`mode`:"0755", `name`:"vmstat", `path`:"/usr/bin/vmstat", `size`:28128})
+create (_4355:`File` {`mode`:"0755", `name`:"w", `path`:"/usr/bin/w", `size`:19944})
+create (_4356:`File` {`mode`:"0755", `name`:"watch", `path`:"/usr/bin/watch", `size`:24736})
+create (_4357:`File` {`mode`:"0777", `name`:"libprocps.so.1", `path`:"/usr/lib64/libprocps.so.1", `size`:18})
+create (_4358:`File` {`mode`:"0755", `name`:"libprocps.so.1.1.2", `path`:"/usr/lib64/libprocps.so.1.1.2", `size`:74096})
+create (_4359:`File` {`mode`:"0755", `name`:"sysctl", `path`:"/usr/sbin/sysctl", `size`:24168})
+create (_4360:`File` {`mode`:"0755", `name`:"procps-ng", `path`:"/usr/share/doc/procps-ng", `size`:4096})
+create (_4361:`File` {`mode`:"0777", `name`:"rvim", `path`:"/usr/bin/rvim", `size`:3})
+create (_4362:`File` {`mode`:"0755", `name`:"vim", `path`:"/usr/bin/vim", `size`:2321384})
+create (_4363:`File` {`mode`:"0777", `name`:"vimdiff", `path`:"/usr/bin/vimdiff", `size`:3})
+create (_4364:`File` {`mode`:"0755", `name`:"vimtutor", `path`:"/usr/bin/vimtutor", `size`:2084})
+create (_4365:`File` {`mode`:"0755", `name`:"pip", `path`:"/usr/bin/pip", `size`:281})
+create (_4366:`File` {`mode`:"0755", `name`:"pip2", `path`:"/usr/bin/pip2", `size`:283})
+create (_4367:`File` {`mode`:"0755", `name`:"pip2.7", `path`:"/usr/bin/pip2.7", `size`:287})
+create (_4368:`Process` {`cmdline`:"/usr/bin/less -", `created_at`:1433091103446, `name`:"less", `pid`:"21797", `seen_at`:1433091103446, `uid`:"0"})
+create _4326-[:`PROVIDES`]->_4340
+create _4326-[:`PROVIDES`]->_4339
+create _4326-[:`PROVIDES`]->_4338
+create _4326-[:`PROVIDES`]->_4337
+create _4326-[:`PROVIDES`]->_4336
+create _4326-[:`IS_ARCH`]->_4325
+create _4327-[:`IS_VERSION`]->_4326
+create _4327-[:`IS_ALIVE`]->_4328
+create _4329-[:`PROVIDES`]->_4360
+create _4329-[:`PROVIDES`]->_4359
+create _4329-[:`PROVIDES`]->_4358
+create _4329-[:`PROVIDES`]->_4357
+create _4329-[:`PROVIDES`]->_4356
+create _4329-[:`PROVIDES`]->_4355
+create _4329-[:`PROVIDES`]->_4354
+create _4329-[:`PROVIDES`]->_4353
+create _4329-[:`PROVIDES`]->_4352
+create _4329-[:`PROVIDES`]->_4351
+create _4329-[:`PROVIDES`]->_4350
+create _4329-[:`PROVIDES`]->_4349
+create _4329-[:`PROVIDES`]->_4348
+create _4329-[:`PROVIDES`]->_4347
+create _4329-[:`PROVIDES`]->_4346
+create _4329-[:`PROVIDES`]->_4345
+create _4329-[:`PROVIDES`]->_4344
+create _4329-[:`PROVIDES`]->_4343
+create _4329-[:`PROVIDES`]->_4342
+create _4329-[:`PROVIDES`]->_4341
+create _4329-[:`IS_ARCH`]->_4325
+create _4330-[:`IS_VERSION`]->_4329
+create _4330-[:`IS_ALIVE`]->_4328
+create _4331-[:`PROVIDES`]->_4364
+create _4331-[:`PROVIDES`]->_4363
+create _4331-[:`PROVIDES`]->_4362
+create _4331-[:`PROVIDES`]->_4361
+create _4331-[:`IS_ARCH`]->_4325
+create _4332-[:`IS_ALIVE`]->_4328
+create _4332-[:`IS_VERSION`]->_4331
+create _4334-[:`PROVIDES`]->_4367
+create _4334-[:`PROVIDES`]->_4366
+create _4334-[:`PROVIDES`]->_4365
+create _4334-[:`IS_ARCH`]->_4333
+create _4335-[:`IS_VERSION`]->_4334
+create _4335-[:`IS_ALIVE`]->_4328
+create _4368-[:`RUNS`]->_4336
+;
+commit
+ ----
+
+becomes:
+
+[source,cypher]
+----
+CREATE (n{name:'cypher'})-[r:LIKES]->({name:'icecream'}) return n.name, r
+----
+
+_Queries are executed in the order they appear on the page during rendering, so make sure they can be performed in that order._
+Each query has a green or red button to indicate if the query was successful or not.
+The console is set up after the executions, with an empty database, for the reader to play around with the queries.
