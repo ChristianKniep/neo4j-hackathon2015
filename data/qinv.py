@@ -275,13 +275,10 @@ class InventoryClass(object):
         self._users = self._gdb.labels.create("Users")
         query ="SELECT uid,gid,username,directory,shell FROM users;"
         for item in json.loads(self._osq.setOutputMode("--json").query(query)):
-	    print item
-            ##new_node = self._gdb.nodes.create(**item)
-            ##self._users.add(new_node)
-	    query = "MATCH (g:Groups {gid:{gid}})"
-	    query += " MERGE (u:Users {name:{username},directory:{directory},shell:{shell},uid:{uid}, gid:{gid}})"
-	    query += " MERGE (u)-[:MEMBER]->(g)"
-            new_relation = self._gdb.query(query, params=item)    
+            query = "MATCH (g:Groups {gid:{gid}})"
+            query += " MERGE (u:Users {name:{username},directory:{directory},shell:{shell},uid:{uid}, gid:{gid}})"
+            query += " MERGE (u)-[:MEMBER]->(g)"
+            self._gdb.query(query, params=item)
 
 
     def push_groups(self):
@@ -290,7 +287,6 @@ class InventoryClass(object):
         self._groups = self._gdb.labels.create("Groups")
         query ="SELECT gid,groupname AS name FROM groups;"
         for item in json.loads(self._osq.setOutputMode("--json").query(query)):
-	    print item
             new_node = self._gdb.nodes.create(**item)
             self._groups.add(new_node)
 
