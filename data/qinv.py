@@ -215,6 +215,7 @@ class InventoryClass(object):
         self.push_pkg()
         self.push_groups()
         self.push_users()
+        self.push_logged_in_users()
 
     def push_pkg(self):
         """ fetch installed system packages and push it to Neo4j
@@ -257,6 +258,18 @@ class InventoryClass(object):
 	    print item
             new_node = self._gdb.nodes.create(**item)
             self._groups.add(new_node)
+
+
+    def push_logged_in_users(self):
+        """ push logged_in_users information
+        """
+        self._logged_in_users = self._gdb.labels.create("LoggedInUsers")
+        query ="SELECT user AS name,host,time, tty,pid FROM logged_in_users;"
+        for item in json.loads(self._osq.setOutputMode("--json").query(query)):
+	    query = "MATCH (u:Users {name:{name}})"
+	    query += " MERGE (l:LoggedInUsers {host:{host}, time:{time}, tty:{tty}, pid:{pid}})"
+	    query += " MERGE (u)<-[:LOGIN]-(l)"
+            new_relation = self._gdb.query(query, params=item)    
 
 
     def con_gdb(self):
