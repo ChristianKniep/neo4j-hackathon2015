@@ -212,7 +212,7 @@ class InventoryClass(object):
     def run(self):
         """ does sth
         """
-        #self.push_pkg()
+        self.push_pkg()
         self.push_groups()
         self.push_users()
 
