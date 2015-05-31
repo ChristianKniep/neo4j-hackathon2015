@@ -213,6 +213,7 @@ class InventoryClass(object):
         """ does sth
         """
         self.push_pkg()
+        self.push_processes()
 
     def push_pkg(self):
         """ fetch installed system packages and push it to Neo4j
@@ -227,8 +228,14 @@ class InventoryClass(object):
         """
         os_query ="SELECT name, version, arch FROM rpm_packages;"
         for item in json.loads(self._osq.setOutputMode("--json").query(os_query)):
-            query = "MERGE (a:Arch {arch:'%(arch)s'}) MERGE (p:Pkg {name:'%(name)s', version:'%(version)s'})-[:IS_ARCH]->a" % item
-            self._gdb.query(q=query)
+            query = "MERGE (a:Arch {arch:{arch}}) MERGE (p:Pkg {name:{name}})-[:IS_ARCH]->a"
+            query += " MERGE (i:Installation {version:{version}})"
+            query += " MERGE (c:Latest)"
+            query += " ON CREATE SET i.created_at = timestamp(), i.seen_at = timestamp()"
+            query += " ON MATCH SET i.seen_at = timestamp() "
+            query += " MERGE (i)-[:IS_VERSION]->p"
+            query += " MERGE (i)-[:IS_ALIVE]->c"
+            self._gdb.query(q=query, params=item)
 
     def push_rpm_files(self):
         """ push rpm file information
@@ -238,9 +245,24 @@ class InventoryClass(object):
             if item['mode'].startswith("07"):
                 # TODO: Only add executables
                 item['file_name'] = os.path.split(item['path'])[-1]
-                query = "MATCH (p:Pkg {name:'%(name)s'})" % item
-                query += "MERGE (f:File {name:'%(file_name)s', path:'%(path)s', size:'%(size)s', mode:'%(mode)s'})<-[:PROVIDES]-p" % item
-                self._gdb.query(q=query)
+                item['size'] = int(item['size'])
+                query = "MATCH (p:Pkg {name:{name}})"
+                query += " MERGE (f:File {name:{file_name}, path:{path}, size:{size}, mode:{mode}})"
+                query += " MERGE (f)<-[:PROVIDES]-(p)"
+                self._gdb.query(q=query, params=item)
+
+    def push_processes(self):
+        """ push process table
+        """
+        os_query = "SELECT pid, name, path, cmdline, uid FROM processes;"
+        for item in json.loads(self._osq.setOutputMode("--json").query(os_query)):
+            query = "MATCH (f:File {path:{path}})"
+            query += " MERGE (p:Process {pid:{pid}, cmdline:{cmdline}, name:{name}, uid:{uid}})"
+            query += " ON CREATE SET p.created_at = timestamp(), p.seen_at = timestamp()"
+            query += " ON MATCH SET p.seen_at = timestamp()"
+            query += " MERGE (f)<-[:RUNS]-(p)"
+            self._gdb.query(q=query, params=item)
+
 
 
     def con_gdb(self):
