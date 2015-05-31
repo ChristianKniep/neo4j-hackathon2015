@@ -217,6 +217,7 @@ class InventoryClass(object):
     def push_pkg(self):
         """ fetch installed system packages and push it to Neo4j
         """
+        self._pkg = self._gdb.labels.create("Pkg")
         if os.path.exists("/etc/redhat-release"):
             self.push_rpm()
 
@@ -225,9 +226,8 @@ class InventoryClass(object):
         """
         query ="SELECT name, version, arch  FROM rpm_packages;"
         for item in json.loads(self._osq.setOutputMode("--json").query(query)):
-            type(item)
-            query = "MERGE (rpm:ARCH {"
-            new_node = self._gdb.query(query)
+            new_node = self._gdb.nodes.create(**item)
+            self._pkg.add(new_node)
 
 
     def con_gdb(self):
