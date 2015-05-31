@@ -220,14 +220,27 @@ class InventoryClass(object):
         self._pkg = self._gdb.labels.create("Pkg")
         if os.path.exists("/etc/redhat-release"):
             self.push_rpm()
+            self.push_rpm_files()
 
     def push_rpm(self):
         """ push rpm information
         """
-        query ="SELECT name, version, arch  FROM rpm_packages;"
-        for item in json.loads(self._osq.setOutputMode("--json").query(query)):
-            new_node = self._gdb.nodes.create(**item)
-            self._pkg.add(new_node)
+        os_query ="SELECT name, version, arch FROM rpm_packages;"
+        for item in json.loads(self._osq.setOutputMode("--json").query(os_query)):
+            query = "MERGE (a:Arch {arch:'%(arch)s'}) MERGE (p:Pkg {name:'%(name)s', version:'%(version)s'})-[:IS_ARCH]->a" % item
+            self._gdb.query(q=query)
+
+    def push_rpm_files(self):
+        """ push rpm file information
+        """
+        os_query ="SELECT package AS name, path, mode, size FROM rpm_package_files;"
+        for item in json.loads(self._osq.setOutputMode("--json").query(os_query)):
+            if item['mode'].startswith("07"):
+                # TODO: Only add executables
+                item['file_name'] = os.path.split(item['path'])[-1]
+                query = "MATCH (p:Pkg {name:'%(name)s'})" % item
+                query += "MERGE (f:File {name:'%(file_name)s', path:'%(path)s', size:'%(size)s', mode:'%(mode)s'})<-[:PROVIDES]-p" % item
+                self._gdb.query(q=query)
 
 
     def con_gdb(self):
