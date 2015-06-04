@@ -12,26 +12,30 @@ A graphDB model that gathers information using `osquery` and pushes this informa
 - Show which package a file belongs to, which is executed currently
 - build up history of installed packages
 
-== Staging
+== Include a query console
 
-//setup
-[source,cypher]
-----
-CREATE (chc:City { name: "Chicago", lat: 41.833, lon: -87.617 }), (sea:City { name: "Seattle", lat: 47.617, lon: -122.334 }),
-(sfo:City { name: "San Francisco", lat: 37.783, lon: -122.433 }), (tok:City { name: "Tokyo", lat: 35.667, lon: 139.75 }),
-(chc)-[:BACKBONE_TO]->(sea), (sea)-[:BACKBONE_TO]->(sfo), (sea)-[:BACKBONE_TO]->(tok), (sfo)-[:BACKBONE_TO]->(tok)
-----
++//console+
+
+becomes:
 
 //console
 
- 
-//console
+NOTE: Put the console before any queries!
+
+== Define a http://docs.neo4j.org/chunked/snapshot/cypher-query-lang.html[Cypher] query
+
+ [source,cypher]
+ ----
+ CREATE (n{name:'cypher'})-[r:LIKES]->({name:'icecream'}) return n.name, r
+ ----
+
+becomes:
 
 [source,cypher]
 ----
-MATCH (c:City {name:'Chicago'}) RETURN c
+CREATE (n{name:'cypher'})-[r:LIKES]->({name:'icecream'}) return n.name, r
 ----
 
-And render as a table.
-
-//table
+_Queries are executed in the order they appear on the page during rendering, so make sure they can be performed in that order._
+Each query has a green or red button to indicate if the query was successful or not.
+The console is set up after the executions, with an empty database, for the reader to play around with the queries.
