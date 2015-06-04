@@ -1,4 +1,9 @@
 = QNIBInventory
+Christian Kniep <christian@qnib.org>
+v0.1, 2015-05-04
+:neo4j-version: local
+:author: Christian Kniep
+:twitter: @CQnib
 
 A graphDB model that gathers information using `osquery` and pushes this information into Neo4j.
 
@@ -11,7 +16,7 @@ A graphDB model that gathers information using `osquery` and pushes this informa
 
  [source,cypher]
  ----
- begin
+begin
 create (_3755:`Group` {`name`:"test"})
 create (_4325:`Arch` {`arch`:"x86_64"})
 create (_4326:`Pkg` {`name`:"less"})
@@ -105,3 +110,12 @@ create _4368-[:`RUNS`]->_4336
 ;
 commit
  ----
+
+[source,cypher]
+----
+MATCH (p:Pkg {name:'procps-ng'}) RETURN p
+----
+
+And render as a table.
+
+//table
