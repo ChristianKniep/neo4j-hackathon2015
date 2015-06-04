@@ -110,6 +110,8 @@ create _4368-[:`RUNS`]->_4336
 ;
 commit
  ----
+ 
+//console
 
 [source,cypher]
 ----
